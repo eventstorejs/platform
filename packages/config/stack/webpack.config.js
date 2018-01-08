@@ -35,10 +35,10 @@ module.exports = {
   module: {
     rules: [{
       test: /\.tsx?$/,
-      exclude: [/node_modules/],
+      exclude: [/node_modules\/(?!@eventstorejs)/],
       loader: 'awesome-typescript-loader',
       query: {
-        configFileName: 'tsconfig.build.json',
+        configFileName: path.join(__dirname, 'tsconfig.build.json'),
         transpileOnly: true,
         useBabel: false,
         useCache: true,
