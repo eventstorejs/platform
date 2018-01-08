@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "declaration": true,
+    "strict": true,
+    "lib": [
+      "es2015"
+    ],
+    "rootDir": "handlers"
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}
