@@ -2,8 +2,6 @@ service: logger
 
 custom:
 
-  webpack: ../config/stack/webpack.config.js
-
   ssm:
     log/ship-logs/arn:
       Fn::Join:

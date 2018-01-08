@@ -1,0 +1,1 @@
+module.exports = require('@eventstorejs/config/stack/webpack.config');
