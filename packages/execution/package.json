@@ -9,6 +9,9 @@
   },
   "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@eventstorejs/api-builder": "^1.0.0",
     "@eventstorejs/aws": "^1.0.0",

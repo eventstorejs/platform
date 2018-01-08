@@ -8,6 +8,9 @@
   },
   "author": "",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "graphcool": "^0.10.1",
     "process-promises": "^1.0.0"

@@ -21,6 +21,9 @@
   ],
   "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "child-process-promise": "^2.2.1",
     "fs-extra": "^3.0.1",

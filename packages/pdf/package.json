@@ -9,6 +9,9 @@
   },
   "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/fs-extra": "^5.0.0"
   },

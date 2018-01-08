@@ -9,6 +9,9 @@
   },
   "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/cuid": "^1.3.0"
   },

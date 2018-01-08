@@ -9,6 +9,9 @@
   },
   "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "io-ts": "^0.8.2"
   }

@@ -7,6 +7,9 @@
   "scripts": {},
   "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "amazon-cognito-identity-js": "^1.28.0",
     "dotenv": "^4.0.0"

@@ -5,6 +5,9 @@
   "scripts": {},
   "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "is-ci": "^1.0.10",
     "lodash": "^4.17.4",
