@@ -13,11 +13,10 @@ function publish(pluginConfig, {
   logger
 }) {
   return new Promise((resolve, reject) => {
-
     const deploy = spawn('node_modules/.bin/lerna', [
       'publish',
       '--yes',
-      '--cd-version', nextRelease.type || 'patch',
+      '--repo-version', nextRelease.version,
       '--message', `chore(release): publish version ${nextRelease.version}`,
       '--skip-git',
       '--force-publish',
