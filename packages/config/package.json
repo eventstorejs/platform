@@ -4,13 +4,6 @@
   "description": "",
   "scripts": {},
   "main": "tslint.js",
-  "files": [
-    "tslint.js",
-    "tsconfig.json",
-    ".vscode/settings.json",
-    "README.md",
-    "LICENSE"
-  ],
   "author": "",
   "license": "ISC",
   "publishConfig": {
