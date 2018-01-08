@@ -9,7 +9,7 @@ import { PdfService } from './pdf.service'
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
 
-test('create pdf', async () => {
+test.skip('create pdf', async () => {
   let config = Mock.ofType(Config)
 
   let pdf = new PdfService(config.object, null as any)
