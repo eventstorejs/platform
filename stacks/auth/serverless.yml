@@ -2,7 +2,7 @@ service: auth
 
 custom:
 
-  webpack: ../../tools/build/stack/webpack.config.js
+  webpack: ../node_modules/@eventstorejs/config/stack/webpack.config.js
 
   ssm:
     auth/userpool/id:
