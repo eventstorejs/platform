@@ -1,0 +1,21 @@
+{
+  "name": "@eventstorejs/storage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist node_modules && tsc -p tsconfig.build.json"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/fs-extra": "^5.0.0"
+  },
+  "dependencies": {
+    "@eventstorejs/api-builder": "^1.0.0",
+    "@eventstorejs/aws": "^1.0.0",
+    "fs-extra": "^5.0.0",
+    "lodash": "^4.17.4"
+  }
+}

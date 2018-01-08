@@ -1,0 +1,23 @@
+{
+  "testRegex": "\\.(test|spec)\\.(ts|tsx)$",
+  "transform": {
+    ".(ts|tsx)": "<rootDir>/node_modules/@eventstorejs/test/utils/preprocessor.js"
+  },
+  "transformIgnorePatterns": [
+    "node_modules/(?!@eventstorejs)"
+  ],
+  "resolver": "<rootDir>/node_modules/@eventstorejs/test/utils/resolver.js",
+  "setupTestFrameworkScriptFile": "<rootDir>/node_modules/@eventstorejs/test/utils/setup.ts",
+  "testEnvironment": "node",
+  "coverageReporters": ["json", "lcov", "text", "html"],
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "tex",
+    "mjml",
+    "html",
+    "js",
+    "gql",
+    "graphql"
+  ]
+}

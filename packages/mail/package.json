@@ -1,0 +1,20 @@
+{
+  "name": "@eventstorejs/mail",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist node_modules && tsc -p tsconfig.build.json"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@eventstorejs/core": "^1.0.0",
+    "@eventstorejs/storage": "^1.0.0",
+    "io-ts": "^0.8.2",
+    "mailgun-js": "^0.13.1",
+    "mjml": "^3.3.5",
+    "tmp": "^0.0.33"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@eventstorejs/*": [
+        "./packages/*/src/index.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

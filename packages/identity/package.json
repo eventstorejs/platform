@@ -1,0 +1,19 @@
+{
+  "name": "@eventstorejs/identity",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist node_modules && tsc -p tsconfig.build.json"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@eventstorejs/aws": "^1.0.0",
+    "@eventstorejs/request": "^1.0.0",
+    "jsonwebtoken": "^8.1.0",
+    "jwk-to-pem": "^1.2.6",
+    "node-fetch": "^1.7.3"
+  }
+}

@@ -1,0 +1,98 @@
+aliases:
+  - &restore-cache
+    keys:
+      - v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      # Fallback in case checksum fails
+      - v2-dependencies-{{ .Branch }}-
+
+  - &save-cache
+    paths:
+      - node_modules
+    key: v2-dependencies-{{ .Branch }}-{{ checksum "yarn.lock" }}
+
+  - &yarn-install
+    run:
+      name: Install dependencies
+      command: |
+        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+        yarn --no-progress
+        yarn run bootstrap
+
+version: 2
+jobs:
+  test-node-8:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore-cache: *restore-cache
+      - *yarn-install
+      - save-cache: *save-cache
+      - run: yarn run unit --coverage
+      - store_artifacts:
+          path: ~/repo/coverage
+          destination: coverage-v8
+
+
+  test-node-6:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:6
+    steps:
+      - checkout
+      - restore-cache: *restore-cache
+      - *yarn-install
+      - save-cache: *save-cache
+      - run: yarn run unit --coverage
+      - store_artifacts:
+          path: ~/repo/coverage
+          destination: coverage-v6
+
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore-cache: *restore-cache
+      - *yarn-install
+      - save-cache: *save-cache
+      - run: yarn run build
+      - persist_to_workspace:
+        # Must be an absolute path, or relative path from working_directory
+          root: ~/repo
+          paths:
+            - "**/*"
+            - "*"
+
+  release:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - *yarn-install
+      - run: npm run release
+
+
+workflows:
+  version: 2
+  build-and-release:
+    jobs:
+      - build:
+          context: org-global
+      - test-node-6:
+          context: org-global
+      - test-node-8:
+          context: org-global
+      - release:
+          context: org-global
+          requires:
+            - build
+            - test-node-6
+            - test-node-8
+          filters:
+            branches:
+              only: master

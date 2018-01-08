@@ -1,0 +1,225 @@
+service: eventstore
+
+custom:
+
+  webpack: ../../node_modules/@eventstorejs/config/stack/webpack.config.js
+
+  annotations:
+    handlers:
+      handler:
+      eventHandler:
+        events:
+          - stream:
+              type: dynamodb
+              arn:
+                Fn::GetAtt:
+                  - EventsTable
+                  - StreamArn
+  ssm:
+    eventstore/command-bus/arn:
+      Ref: CommandBus
+    # TODO manually... Fn::GetAtt not working with resolver
+    #'eventstore/event-stream/arn':
+    #  Fn::GetAtt:
+    #    - EventsTable
+    #    - StreamArn
+    eventstore/bucket:
+      Ref : EventstoreBucket
+    eventstore/key:
+      Ref: EncryptionKey
+    eventstore/tables/eventstore:
+      Ref: EventsTable
+    eventstore/tables/saga:
+      Ref: SagaTable
+    eventstore/tables/saga-associtation:
+      Ref: SagaAssociationTable
+    eventstore/tables/snapshot:
+      Ref: SnapshotTable
+  # Config for dynamo autoscaling plugin
+  capacities:
+
+  # command-bus:
+  #   - sns:
+  #       topicName: ${self:provider.environment.SNS_PREFIX}commands
+  #       displayName: Command Bus for Stage ${self:provider.environment.STAGE} of ${self:service}
+  # Workaround see https://github.com/serverless/serverless/issues/3212
+
+
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: int
+  region: eu-central-1
+  memorySize: 256
+  timeout: 60 # optional, in seconds, default is 6
+  environment:
+    STAGE : ${opt:stage, self:provider.stage}
+    REGION: ${opt:region, self:provider.region}
+
+  iamRoleStatements:
+    # - Effect: Allow
+    #   Action:
+    #     - KMS:Decrypt
+    #   Resource: ${self:custom.secrets.keyArn}
+    - Effect: Allow
+      Action:
+        - SSM:GetParameter
+      Resource: arn:aws:ssm:eu-central-1:631908550553:parameter/${self:provider.environment.STAGE}/*
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - Fn::Join:
+            - ""
+            - - "arn:aws:s3:::"
+              - "Ref" : "EventstoreBucket"
+        - Fn::Join:
+            - ""
+            - - "arn:aws:s3:::"
+              - "Ref" : "EventstoreBucket"
+              - "/*"
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:${self:provider.environment.REGION}:*:table/${self:provider.environment.STAGE}.*"
+    # - Effect: Allow
+    #   Action:
+    #     - sns:*
+    #   Resource:
+    #     - 'Fn::Join':
+    #       - ':'
+    #       -
+    #         - 'arn:aws:sns'
+    #         - Ref: 'AWS::Region'
+    #         - Ref: 'AWS::AccountId'
+    #         - '${self:provider.environment.SNS_PREFIX}*'
+    - Effect: 'Allow'
+      Action:
+        - 'lambda:InvokeFunction'
+      Resource:
+        - "arn:aws:lambda:${self:provider.environment.REGION}:*:function:*-${self:provider.environment.STAGE}-*"
+      # - Fn::Join:
+      #   - ':'
+      #   - - arn:aws:lambda
+      #     - Ref: AWS::Region
+      #     - Ref: AWS::AccountId
+      #     - function:${self:service}-${self:provider.environment.STAGE}-*
+
+plugins:
+  - serverless-annotations
+  - serverless-dynamodb-autoscaling
+  - serverless-deploy-ssm
+  - serverless-log-aggregate
+  - serverless-webpack
+  - serverless-stack-manager
+
+functions:
+
+
+resources:
+  Resources:
+    EventstoreBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.STAGE}.eventstore.4wheels-it-solutions.de
+      DeletionPolicy: Retain
+    CommandBus:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: ${self:provider.environment.STAGE} Command Bus
+        TopicName: ${self:provider.environment.STAGE}-commandbus
+    EncryptionKey:
+      Type: 'AWS::KMS::Key'
+      Properties:
+        Description: Config Key for ${self:provider.environment.STAGE}
+        KeyPolicy:
+          Version: "2012-10-17"
+          Id: "${self:provider.environment.STAGE}-key-policy"
+          Statement:
+            - Sid: "Enable IAM User Permissions"
+              Effect: "Allow"
+              Principal:
+                AWS: "arn:aws:iam::631908550553:root"
+              Action:
+                - "kms:*"
+              Resource: "*"
+            - Sid: "Allow administration of the key"
+              Effect: "Allow"
+              Principal:
+                AWS: "arn:aws:iam::631908550553:user/Jonas_Holtorf"
+              Action:
+                - "kms:**"
+              Resource: "*"
+    EncryptionKeyAlias:
+      Type: "AWS::KMS::Alias"
+      Properties:
+        AliasName: "alias/${self:provider.environment.STAGE}-key"
+        TargetKeyId:
+          Ref: EncryptionKey
+    EventsTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: aggregateId
+            AttributeType: S
+          - AttributeName: revision
+            AttributeType: N
+        KeySchema:
+          - AttributeName: aggregateId
+            KeyType: HASH
+          - AttributeName: revision
+            KeyType: RANGE
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3 #Overriden by autoscale
+          WriteCapacityUnits: 3 #Overriden by autoscale
+        TableName: ${self:provider.environment.STAGE}.es.event
+    SagaTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: sagaId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: sagaId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3 #Overriden by autoscale
+          WriteCapacityUnits: 3 #Overriden by autoscale
+        TableName: ${self:provider.environment.STAGE}.es.saga
+    SagaAssociationTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: associationKey
+            AttributeType: S
+          - AttributeName: sagaId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: associationKey
+            KeyType: HASH
+          - AttributeName: sagaId
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3 #Overriden by autoscale
+          WriteCapacityUnits: 3 #Overriden by autoscale
+        TableName: ${self:provider.environment.STAGE}.es.saga-association
+    SnapshotTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: aggregateId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: aggregateId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3 #Overriden by autoscale
+          WriteCapacityUnits: 3 #Overriden by autoscale
+        TableName: ${self:provider.environment.STAGE}.es.snapshot

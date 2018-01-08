@@ -1,0 +1,39 @@
+service: mailer
+
+custom:
+
+  webpack: ../../tools/build/stack/webpack.config.js
+
+  ssm:
+    mailer/mailgun/domain: mg.radwechseldich.de
+    mailer/mailgun/api:
+      encrypted: true
+      value: AQICAHhAH89SVTWKUzcEpwAjjVxKiE5syROOi5p1anwz8PQAEwHjVVNj3qFgYN6sUPth0/vCAAAAgzCBgAYJKoZIhvcNAQcGoHMwcQIBADBsBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDA9sbqoH5Iq70WiUIwIBEIA/P2DPqsmhT1p96xfEM4bb41eV/vv3VGUu4LpBc+YPphs7eSZZ24N16mSas9QaYucytdppjV7b2QdIzoI0Yia9
+
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: int
+  region: eu-central-1
+  memorySize: 256
+  timeout: 60 # optional, in seconds, default is 6
+  environment:
+    STAGE : ${opt:stage, self:provider.stage}
+    REGION: ${opt:region, self:provider.region}
+
+  iamRoleStatements:
+
+plugins:
+  - "@eventstorejs/serverless-eventstore"
+  - serverless-annotations
+  - serverless-deploy-ssm
+  - serverless-log-aggregate
+  - serverless-webpack
+  - serverless-stack-manager
+
+functions:
+
+
+resources:
+  Resources:

@@ -1,0 +1,15 @@
+{
+  "extends": "@eventstorejs/config",
+  "rules": {
+    "no-floating-promises": true,
+    "no-unused-variable": true,
+    "prefer-const": true,
+    "no-parameter-reassignment": true
+  },
+  "linterOptions": {
+    "exclude": [
+      "node_modules/**",
+      "**/node_modules/**"
+    ]
+  }
+}

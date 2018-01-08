@@ -1,0 +1,13 @@
+{
+  "name": "@eventstorejs/ci-tools",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {},
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "is-ci": "^1.0.10",
+    "lodash": "^4.17.4",
+    "simple-git": "^1.85.0"
+  }
+}

@@ -1,0 +1,100 @@
+service: logger
+
+custom:
+
+  webpack: ../../tools/build/stack/webpack.config.js
+
+  ssm:
+    log/ship-logs/arn:
+      Fn::Join:
+          - ""
+          - - "arn:aws:lambda:${self:provider.environment.REGION}:631908550553:function:"
+            - "Ref" : "ShipDashlogsLambdaFunction"
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: int
+  region: eu-central-1
+  memorySize: 128
+  timeout: 60 # optional, in seconds, default is 6
+  environment:
+    STAGE : ${opt:stage, self:provider.stage}
+    REGION: ${opt:region, self:provider.region}
+    PUBLISH_METRICS: true
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "logs:PutRetentionPolicy"
+        - "logs:PutSubscriptionFilter"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "cloudwatch:PutMetricData"
+      Resource: "*"
+
+
+plugins:
+  - serverless-deploy-ssm
+  - serverless-webpack
+  - serverless-stack-manager
+
+functions:
+  ship-logs:
+    handler: src/handlers/ship-logs.default
+    description: Pipes Cloudwatch Logs
+  slack-notification:
+    handler: src/handlers/slack-notification.default
+    description: Sends Alarm Messages to Slack
+    events:
+      - sns:
+          arn:
+            Fn::Join:
+              - ""
+              - - "arn:aws:sns:"
+                - ${self:provider.environment.REGION}
+                - ":"
+                - "631908550553"
+                - ":"
+                - "${self:provider.environment.STAGE}-alarm"
+          topicName: ${self:provider.environment.STAGE}-alarm
+
+
+resources:
+  Resources:
+    LambdaInvokePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName:
+          Fn::Join:
+            - ""
+            - - "Ref" : "ShipDashlogsLambdaFunction"
+        Principal: logs.${self:provider.environment.REGION}.amazonaws.com
+    AlarmTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: ${self:provider.environment.STAGE} Alarm Topic
+        TopicName: ${self:provider.environment.STAGE}-alarm
+    InternalErrorAlarm:
+      Type: "AWS::CloudWatch::Alarm"
+      Properties:
+        ActionsEnabled: True
+        AlarmActions:
+          - Ref: AlarmTopic
+        AlarmDescription: Uncaught Errors in ${self:provider.environment.STAGE}
+        AlarmName: ${self:provider.environment.STAGE}.InternalError
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        EvaluationPeriods: 1
+        #InsufficientDataActions:
+        #  - Ref: AlarmTopic
+        MetricName: InternalError
+        Namespace: ${self:provider.environment.STAGE}
+        OKActions:
+          - Ref: AlarmTopic
+        Period: 300
+        Statistic: Sum
+        Threshold: 1
+        TreatMissingData: notBreaching
+        Unit: Count

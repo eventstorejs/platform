@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "inlineSourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "traceResolution": false,
+    "listFiles": false,
+    "stripInternal": true,
+    "pretty": true,
+    "preserveConstEnums": true,
+    "plugins": [{
+      "name": "tslint-language-service",
+      "alwaysShowRuleFailuresAsWarnings": false,
+      "ignoreDefinitionFiles": true
+    }]
+  }
+}

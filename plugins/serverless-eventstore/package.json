@@ -1,0 +1,26 @@
+{
+  "name": "@eventstorejs/serverless-eventstore",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jonasho/serverless-annotations.git"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jonasho/serverless-annotations/issues"
+  },
+  "homepage": "https://github.com/jonasho/serverless-annotations#readme",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "glob": "^7.1.2",
+    "lodash": "^4.17.4",
+    "serverless-annotations": "^1.0.0",
+    "typescript": "^2.6.1"
+  }
+}

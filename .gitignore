@@ -1,0 +1,30 @@
+node_modules
+.DS_Store
+*.log
+.tmp
+.serverless
+.nyc-output
+.tests
+.build
+.webpack
+dist
+yarn-error.log
+.awcache
+vendor
+.history
+
+# env files is auto created using serverless export-env. better not commit
+.env
+
+# Build files
+target
+packages/**/bundles
+packages/**/lib
+packages/**/dist
+.ng_pkg_build
+
+# Coverage report
+coverage
+
+# Linked api
+# apis

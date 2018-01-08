@@ -1,0 +1,221 @@
+service: auth
+
+custom:
+
+  webpack: ../../tools/build/stack/webpack.config.js
+
+  ssm:
+    auth/userpool/id:
+      Ref: UserPool
+    auth/tables/tenant:
+      Ref: TenantTable
+
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: int
+  region: eu-central-1
+  memorySize: 256
+  timeout: 60 # optional, in seconds, default is 6
+  environment:
+    STAGE : ${opt:stage, self:provider.stage}
+    REGION: ${opt:region, self:provider.region}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:${self:provider.environment.REGION}:*:table/${self:provider.environment.STAGE}.*"
+
+plugins:
+  - "@eventstorejs/serverless-eventstore"
+  - serverless-annotations
+  - serverless-deploy-ssm
+  - serverless-webpack
+  - serverless-log-aggregate
+  - serverless-stack-manager
+
+functions:
+
+
+resources:
+  Resources:
+    TenantTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: tenantId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tenantId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3 #Overriden by autoscale
+          WriteCapacityUnits: 3 #Overriden by autoscale
+        TableName: ${self:provider.environment.STAGE}.auth.tenant
+    UserPool:
+      Type: "AWS::Cognito::UserPool"
+      Properties:
+        AdminCreateUserConfig:
+          UnusedAccountValidityDays: 0
+          AllowAdminCreateUserOnly: True
+        AliasAttributes:
+          - email
+          - preferred_username
+        Schema:
+          - AttributeDataType: String
+            Name: "tenant"
+            Mutable: True
+        UserPoolName: ${self:provider.environment.STAGE}_userpool
+    AdminGroupRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: ${self:provider.environment.STAGE}-admin-role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                cognito-identity.amazonaws.com:aud:
+                  Ref: IdentityPool
+              ForAnyValue:StringLike:
+                cognito-identity.amazonaws.com:amr: authenticated
+        Policies:
+          - PolicyName: admin-policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "cognito-idp:*"
+                  Resource:
+                    Fn::Join:
+                      - ''
+                      -  - "arn:aws:cognito-idp:${self:provider.environment.REGION}:631908550553:userpool/"
+                         - Ref: UserPool
+    AdminGroup:
+      Type: "AWS::Cognito::UserPoolGroup"
+      Properties:
+          Description: Can do everything
+          GroupName: Admin
+          Precedence: 0
+          RoleArn:
+            Fn::GetAtt:
+              - AdminGroupRole
+              - Arn
+          UserPoolId:
+            Ref: UserPool
+    ManagerGroup:
+      Type: "AWS::Cognito::UserPoolGroup"
+      Properties:
+          Description: Manage Tenant Stuff
+          GroupName: Manager
+          Precedence: 5
+          #RoleArn: TODO
+          UserPoolId:
+            Ref: UserPool
+    UserPoolClient:
+      Type: "AWS::Cognito::UserPoolClient"
+      Properties:
+          ClientName: ${self:provider.environment.STAGE}_userpool-client
+          UserPoolId:
+            Ref: UserPool
+    IdentityPool:
+      Type: "AWS::Cognito::IdentityPool"
+      Properties:
+        IdentityPoolName:
+          Fn::Join:
+            - '_'
+            - Fn::Split:
+              - '-'
+              - ${self:provider.environment.STAGE}_identitypool
+        AllowUnauthenticatedIdentities: true
+        CognitoIdentityProviders:
+          - ClientId:
+              Ref: UserPoolClient
+            ProviderName:
+              Fn::Join:
+              - ""
+              - - cognito-idp.
+                - Ref: "AWS::Region"
+                - .amazonaws.com/
+                - Ref: UserPool
+    IdentityPoolRoles:
+      Type: AWS::Cognito::IdentityPoolRoleAttachment
+      Properties:
+        IdentityPoolId:
+          Ref: IdentityPool
+        Roles:
+          authenticated:
+            Fn::GetAtt:
+            - AuthenticatedRole
+            - Arn
+          unauthenticated:
+            Fn::GetAtt:
+            - UnauthenticatedRole
+            - Arn
+    UnauthenticatedPolicy:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action:
+            - cognito-sync:*
+            Resource:
+            - "*"
+    UnauthenticatedRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRoleWithWebIdentity"
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud":
+                  Ref: IdentityPool
+              ForAnyValue:StringLike:
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+        ManagedPolicyArns:
+        - Ref: UnauthenticatedPolicy
+    AuthenticatedPolicy:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action:
+            - cognito-sync:*
+            - cognito-identity:*
+            Resource:
+            - "*"
+    AuthenticatedRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRoleWithWebIdentity"
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud":
+                  Ref: IdentityPool
+              ForAnyValue:StringLike:
+                "cognito-identity.amazonaws.com:amr": authenticated
+        ManagedPolicyArns:
+        - Ref: AuthenticatedPolicy

@@ -1,0 +1,23 @@
+{
+  "name": "serverless-stack-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jonasho/serverless-annotations.git"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jonasho/serverless-annotations/issues"
+  },
+  "homepage": "https://github.com/jonasho/serverless-annotations#readme",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "semver-diff": "^2.1.0"
+  }
+}

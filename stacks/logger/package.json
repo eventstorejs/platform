@@ -1,0 +1,32 @@
+{
+  "name": "@eventstorejs/logger-stack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "serverless.yml",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "sls deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/eventstorejs/platform.git"
+  },
+  "author": "Jonas Holtorf <jonas.holtorf@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eventstorejs/platform/issues"
+  },
+  "homepage": "https://github.com/eventstorejs/platform#readme",
+  "devDependencies": {
+    "serverless": "^1.24.1",
+    "serverless-deploy-ssm": "^1.0.0",
+    "serverless-webpack": "^4.0.0",
+    "uglifyjs-webpack-plugin": "^1.1.4",
+    "webpack": "^3.8.1",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "dependencies": {
+    "@eventstorejs/api-builder": "^1.0.0",
+    "@eventstorejs/core": "^1.0.0"
+  }
+}

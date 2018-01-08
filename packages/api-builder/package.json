@@ -1,0 +1,15 @@
+{
+  "name": "@eventstorejs/api-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist node_modules && tsc -p tsconfig.build.json"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "io-ts": "^0.8.2"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@eventstorejs/calendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist node_modules && tsc -p tsconfig.build.json"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@eventstorejs/core": "^1.0.0",
+    "ical-generator": "^0.2.10",
+    "lodash": "^4.17.4"
+  }
+}

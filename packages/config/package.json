@@ -1,0 +1,20 @@
+{
+  "name": "@eventstorejs/config",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {},
+  "main": "tslint.js",
+  "files": [
+    "tslint.js",
+    "tsconfig.json",
+    ".vscode/settings.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tslint-eslint-rules": "^4.0.0",
+    "tslint-language-service": ">=0.9.0"
+  }
+}

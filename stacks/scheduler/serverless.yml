@@ -1,0 +1,52 @@
+service: scheduler
+
+custom:
+
+  webpack: ../../tools/build/stack/webpack.config.js
+
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: int
+  region: eu-central-1
+  memorySize: 256
+  timeout: 60 # optional, in seconds, default is 6
+  environment:
+    STAGE : ${opt:stage, self:provider.stage}
+    REGION: ${opt:region, self:provider.region}
+    TRIGGER_TABLE: ${self:provider.environment.STAGE}.trigger
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:${self:provider.environment.REGION}:*:table/${self:provider.environment.TRIGGER_TABLE}"
+
+
+plugins:
+  - "@eventstorejs/serverless-eventstore"
+  - serverless-annotations
+  - serverless-webpack
+  - serverless-log-aggregate
+  - serverless-stack-manager
+
+functions:
+
+
+resources:
+  Resources:
+    TriggerTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: triggerId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: triggerId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 3 #Overriden by autoscale
+          WriteCapacityUnits: 3 #Overriden by autoscale
+        TableName: ${self:provider.environment.TRIGGER_TABLE}

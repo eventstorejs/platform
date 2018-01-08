@@ -1,0 +1,24 @@
+{
+  "name": "@eventstorejs/pdf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist node_modules && tsc -p tsconfig.build.json"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/fs-extra": "^5.0.0"
+  },
+  "dependencies": {
+    "@eventstorejs/core": "^1.0.0",
+    "@eventstorejs/execution": "^1.0.0",
+    "@eventstorejs/latex-binary": "^1.0.0",
+    "@eventstorejs/storage": "^1.0.0",
+    "fs-extra": "^5.0.0",
+    "lodash": "^4.17.4",
+    "tmp": "^0.0.33"
+  }
+}

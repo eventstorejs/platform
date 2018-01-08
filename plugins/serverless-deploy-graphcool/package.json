@@ -1,0 +1,15 @@
+{
+  "name": "serverless-deploy-graphcool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "graphcool": "^0.10.1",
+    "process-promises": "^1.0.0"
+  }
+}
