@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "latex precompiled binary for AWS Lambda with a Node.js wrapper",
   "main": "index.js",
-  "typings" : "index.d.ts",
+  "typings": "index.d.ts",
   "scripts": {
     "build": "node install.js"
   },
@@ -25,6 +25,6 @@
     "child-process-promise": "^2.2.1",
     "fs-extra": "^3.0.1",
     "request": "^2.81.0",
-    "tar.gz": "^1.0.5"
+    "tar": "^4.2.0"
   }
 }

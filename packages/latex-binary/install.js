@@ -1,10 +1,10 @@
-const targz = require('tar.gz');
+const tar = require('tar');
 const fs = require('fs-extra');
 const request = require('request')
 const exec = require('child-process-promise').exec;
 const path = require('path')
 
-const tempPath = './.tmp'
+const tempPath = path.join(__dirname, '.tmp');
 
 const memoryLimit = 10000000
 
@@ -33,10 +33,10 @@ const PACKAGES_TO_INSTALL = [
 
 ]
 
-fs.remove('./.tmp')
+fs.remove(tempPath)
   .then(() => fs.remove('./installation.profile'))
   .then(() => fs.remove('./vendor'))
-  .then(() => fs.mkdir('./.tmp/'))
+  .then(() => fs.mkdir(tempPath))
   .then(() =>
     new Promise((resolve, reject) => {
       request('http://mirrors.rit.edu/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz')
@@ -49,7 +49,10 @@ fs.remove('./.tmp')
           reject(err)
         })
     }))
-  .then(() => targz().extract(`${tempPath}/installer.tar.gz`, tempPath))
+  .then(() => tar.x({
+    file: `${tempPath}/installer.tar.gz`,
+    cwd: tempPath
+  }))
   .then(() => console.log('Installer unzipped'))
   .then(() => exec(`${tempPath}/install-tl*/install-tl --profile=./texlive.profile`))
   .then(() => console.log('Latex install finished'))
@@ -80,7 +83,7 @@ save_size  = ${memoryLimit}`))
   .then(() => fs.remove('./texmf-dist/doc'))
   .then(() => fs.remove('./texmf-local/doc'))
   .then(() => fs.remove('./texmf-var/doc'))
-  .then(() => fs.remove('./.tmp'))
+  .then(() => fs.remove(tempPath))
   .then(() => console.log('Everything done'))
   .catch((err) => {
     console.log(err)
