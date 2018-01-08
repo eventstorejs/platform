@@ -17,7 +17,7 @@ function publish(pluginConfig, {
     const deploy = spawn('node_modules/.bin/lerna', [
       'publish',
       '--yes',
-      '--cd-version', nextRelease.type,
+      '--cd-version', nextRelease.type || 'patch',
       '--message', `chore(release): publish version ${nextRelease.version}`,
       '--skip-git',
       '--force-publish',
