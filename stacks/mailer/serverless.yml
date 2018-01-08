@@ -2,7 +2,7 @@ service: mailer
 
 custom:
 
-  webpack: ../node_modules/@eventstorejs/config/stack/webpack.config.js
+  webpack: ../config/stack/webpack.config.js
 
   ssm:
     mailer/mailgun/domain: mg.radwechseldich.de

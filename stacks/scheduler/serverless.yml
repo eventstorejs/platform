@@ -2,7 +2,7 @@ service: scheduler
 
 custom:
 
-  webpack: ../node_modules/@eventstorejs/config/stack/webpack.config.js
+  webpack: ../config/stack/webpack.config.js
 
 
 provider:
