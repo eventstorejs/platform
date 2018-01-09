@@ -1,19 +1,31 @@
 
 import '@eventstorejs/request'
-import { graphql } from 'graphql'
+import { graphql, GraphQLSchema } from 'graphql'
+import { inject } from 'inversify'
 import { weaveSchemas } from 'graphql-weaver'
 import { tryStringifyJson } from '@eventstorejs/core'
 import { handler, RequestHandler, Context, HttpResponse } from '@eventstorejs/request'
 import { IdentityModule } from '@eventstorejs/identity'
 import { EventStoreModule } from '@eventstorejs/eventstore'
+import { GraphQLEndpointResolver } from '../lib'
 
-const makeSchema = weaveSchemas({
-  endpoints: [{
-    namespace: 'training',
-    typePrefix: 'Training',
-    url: 'https://api.graph.cool/simple/v1/cjaqvnvuf2rfx0121q6tlk4bw' // url to a GraphQL endpoint
-  }]
-})
+let schema: Promise<GraphQLSchema>
+
+const schemaFactory = (endpointResolver: GraphQLEndpointResolver) => {
+  if (!schema) {
+    schema = new Promise<GraphQLSchema>(async (resolve, reject) => {
+      try {
+        const endpoints = await endpointResolver.resolve()
+        resolve(weaveSchemas({
+          endpoints
+        }))
+      } catch (e) {
+        reject(e)
+      }
+    })
+  }
+  return schema
+}
 
 // const log = logger('Garage.command-handler')
 
@@ -34,14 +46,14 @@ const makeSchema = weaveSchemas({
 })
 export default class GraphqlGatewayHandler implements RequestHandler<any> {
 
-  constructor () {
+  constructor( @inject(GraphQLEndpointResolver) private endpointResolver: GraphQLEndpointResolver) {
 
   }
 
   async handle (request: any, _context: Context): Promise<HttpResponse> {
-    let schema = await makeSchema
+    const schema = await schemaFactory(this.endpointResolver)
 
-    let res = await graphql(schema, request.query, {}, {}, request.variables)
+    const res = await graphql(schema, request.query, {}, {}, request.variables)
     return {
       statusCode: 200,
       body: tryStringifyJson(res)
