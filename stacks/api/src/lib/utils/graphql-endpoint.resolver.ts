@@ -16,7 +16,7 @@ export class GraphQLEndpointResolver {
     for (const key in params) {
       resp.push({
         namespace: key,
-        url: (params as any)[key]
+        url: `https://api.graph.cool/simple/v1/${(params as any)[key].split('/')[1]}`
       } as EndpointConfig)
     }
     return resp
