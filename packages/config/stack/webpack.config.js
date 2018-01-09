@@ -2,9 +2,7 @@ const path = require('path');
 const slsw = require('serverless-webpack');
 const fs = require('fs');
 const _ = require('lodash');
-const walk = require('walk');
-const nodeExternals = require('webpack-node-externals');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 
 module.exports = {
