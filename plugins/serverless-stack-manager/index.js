@@ -140,7 +140,7 @@ class StackManager {
               continue;
             }
           }
-          this.serverless.cli.log(`${stack.key} will be deploy with version ${stack.localVersion}`)
+          this.serverless.cli.log(`${stack.key} will be deploy with version ${stack.localVersion} in stage ${this.stage}`)
           updates.push(stack.key)
         }
         return Promise.each(updates, (key) => this.deployStack(key))
