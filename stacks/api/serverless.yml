@@ -10,7 +10,7 @@ custom:
         - ""
         - - https://
           - Ref : ApiGatewayRestApi
-          - .execute-api.${self:custom.region}.amazonaws.com/${self:custom.stage}
+          - .execute-api.${self:provider.environment.REGION}.amazonaws.com/${self:provider.environment.STAGE}
 
 
 provider:
