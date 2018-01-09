@@ -8,6 +8,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "optionalDependencies": {
+    "glob": "^7.1.2",
+    "mjml": "^3.3.5"
+  },
   "dependencies": {
     "is-ci": "^1.0.10",
     "lodash": "^4.17.4",
