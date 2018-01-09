@@ -5,7 +5,12 @@ custom:
   webpack: ../config/stack/webpack.config.js
 
   ssm:
-    api/api/endpoint: 'blub'
+    api/api/endpoint:
+      Fn::Join :
+        - ""
+        - - https://
+          - Ref : ApiGatewayRestApi
+          - .execute-api.${self:custom.region}.amazonaws.com/${self:custom.stage}
 
 
 provider:
