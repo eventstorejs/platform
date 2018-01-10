@@ -23,6 +23,11 @@ provider:
     REGION: ${opt:region, self:provider.region}
 
   iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'lambda:InvokeFunction'
+      Resource:
+        - "arn:aws:lambda:${self:provider.environment.REGION}:*:function:*-${self:provider.environment.STAGE}-*"
 
 plugins:
   - "@eventstorejs/serverless-eventstore"
