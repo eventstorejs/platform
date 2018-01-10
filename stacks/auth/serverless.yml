@@ -5,6 +5,10 @@ custom:
   ssm:
     auth/userpool/id:
       Ref: UserPool
+    auth/client/id:
+      Ref: UserPoolClient
+    auth/identitypool/id:
+      Ref: IdentityPool
     auth/tables/tenant:
       Ref: TenantTable
 
