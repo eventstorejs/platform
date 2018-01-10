@@ -15,8 +15,11 @@ export function setOnAdmin<T> (context: Context | undefined, adminValue: T, defa
 }
 
 export function setTenant (context: Context | undefined, tenant: string, unAuthenticatedTenant?: string) {
-  if (!context || !context.identity || !context.identity.tenant) {
-    return unAuthenticatedTenant
+  if (context && context.identity) {
+    if (context.identity.isAdmin) {
+      return tenant
+    }
+    return context.identity.tenant || unAuthenticatedTenant
   }
-  return setOnAdmin<string>(context, tenant, context.identity.tenant)
+  return unAuthenticatedTenant
 }
