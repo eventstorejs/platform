@@ -140,7 +140,8 @@ class EventStore {
           {
             Effect: 'Allow',
             Action: [
-              'SSM:GetParameter'
+              'SSM:GetParameter',
+              'SSM:GetParametersByPath'
             ],
             Resource: [
               `arn:aws:ssm:eu-central-1:631908550553:parameter/${this.stage}/*`
