@@ -7,7 +7,7 @@ import { tryStringifyJson } from '@eventstorejs/core'
 import { handler, RequestHandler, Context, HttpResponse } from '@eventstorejs/request'
 import { IdentityModule } from '@eventstorejs/identity'
 import { EventStoreModule } from '@eventstorejs/eventstore'
-import { GraphQLEndpointResolver } from '../../lib'
+import { ApiStackModule, GraphQLEndpointResolver } from '../../lib'
 
 let schema: Promise<GraphQLSchema>
 
@@ -42,7 +42,7 @@ const schemaFactory = (endpointResolver: GraphQLEndpointResolver) => {
       cors: true
     }
   }],
-  imports: [EventStoreModule, IdentityModule]
+  imports: [EventStoreModule, IdentityModule, ApiStackModule]
 })
 export default class GraphqlGatewayHandler implements RequestHandler<any> {
 

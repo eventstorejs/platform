@@ -39,7 +39,7 @@ export class SSMConfig extends Config {
   }
 
   public async resolveServiceConfig (stage?: string, service?: string) {
-    return await SSMConfig.resolveServiceConfig(this.ssm, stage, service)
+    return SSMConfig.resolveServiceConfig(this.ssm, stage, service)
   }
 
   public async resolve<T> (name: string, def: T | undefined = undefined): Promise<T | undefined> {

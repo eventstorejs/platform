@@ -11,7 +11,7 @@ export class GraphQLEndpointResolver {
   }
 
   async resolve (): Promise<EndpointConfig[]> {
-    const params = this.config.resolveServiceConfig(await this.config.resolve<string>('STAGE'), 'graphcool')
+    const params = await this.config.resolveServiceConfig(await this.config.resolve<string>('STAGE'), 'graphcool')
     const resp = []
     for (const key in params) {
       resp.push({
