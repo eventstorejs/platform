@@ -2,8 +2,6 @@ service: mailer
 
 custom:
 
-  webpack: ../config/stack/webpack.config.js
-
   ssm:
     mailer/mailgun/domain: mg.radwechseldich.de
     mailer/mailgun/api:

@@ -2,8 +2,6 @@ service: eventstore
 
 custom:
 
-  webpack: ../config/stack/webpack.config.js
-
   annotations:
     handlers:
       handler:
@@ -107,11 +105,9 @@ provider:
       #     - function:${self:service}-${self:provider.environment.STAGE}-*
 
 plugins:
-  - serverless-annotations
   - serverless-dynamodb-autoscaling
   - serverless-deploy-ssm
   - serverless-log-aggregate
-  - serverless-webpack
   - serverless-stack-manager
 
 functions:

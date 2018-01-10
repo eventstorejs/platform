@@ -2,8 +2,6 @@ service: api
 
 custom:
 
-  webpack: ../config/stack/webpack.config.js
-
   ssm:
     api/api/endpoint:
       Fn::Join :

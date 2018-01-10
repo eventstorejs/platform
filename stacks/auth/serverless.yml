@@ -2,8 +2,6 @@ service: auth
 
 custom:
 
-  webpack: ../config/stack/webpack.config.js
-
   ssm:
     auth/userpool/id:
       Ref: UserPool

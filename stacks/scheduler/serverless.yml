@@ -2,8 +2,6 @@ service: scheduler
 
 custom:
 
-  webpack: ../config/stack/webpack.config.js
-
 
 provider:
   name: aws
