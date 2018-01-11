@@ -57,16 +57,10 @@ class EventStore {
     if (this.serverless.variables.options.stage) {
       this.stage = this.serverless.variables.options.stage;
     }
-
     const configPath = `/${this.stage}`
-    let params = {
-      Path: configPath,
-      Recursive: true,
-      WithDecryption: true
-    }
-    return this.aws.request('SSM', 'getParametersByPath', params, this.stage, this.region)
-      .then((res) => {
-
+    return this.resolveSSMParameters(configPath)
+      .then((ssmParams) => {
+        console.log(ssmParams)
         this.config = {
           parameters: {
             eventstore: {
@@ -74,15 +68,16 @@ class EventStore {
             }
           }
         }
-        if (res && res.Parameters) {
-          for (let p of res.Parameters) {
+        if (ssmParams) {
+          for (let p of ssmParams) {
             if (p && p.Name) {
               let parameterName = p.Name.replace(`${configPath}/`, '').split('/').join('.')
               _.set(this.config.parameters, parameterName, p.Value)
             }
           }
         }
-        if(!this.serverless.service.custom) {
+        console.log(JSON.stringify(this.config))
+        if (!this.serverless.service.custom) {
           this.serverless.service.custom = {}
         }
         this.serverless.service.custom.annotations = _.extend({}, {
@@ -209,8 +204,8 @@ class EventStore {
             throw new Error(`Could not resolve context for ${h.fileName}. Either declare it on the request handler or event handler`)
           }
           let name = c.options.name
-          if(!name) {
-            name = c.options.type.split('.')[0].toLowerCase() + '.' +c.options.type.split('.').slice(-1).pop().toUpperCase().replace('COMMAND', '')
+          if (!name) {
+            name = c.options.type.split('.')[0].toLowerCase() + '.' + c.options.type.split('.').slice(-1).pop().toUpperCase().replace('COMMAND', '')
           }
           if (!name) {
             throw new Error(`CommandEventHandler at ${h.fileName} does not have a name. Either set type or name`)
@@ -234,6 +229,29 @@ class EventStore {
         .then(() => resolve())
         .catch(e => reject(e))
     })
+  }
+
+  resolveSSMParameters(configPath, params = [], NextToken = undefined) {
+    let requestParams = {
+      Path: configPath,
+      Recursive: true,
+      WithDecryption: true,
+      NextToken
+    }
+    const result = []
+    return this.aws.request('SSM', 'getParametersByPath', requestParams, this.stage, this.region)
+      .then((res) => {
+        let nextParams = [
+          ... params,
+          ... res.Parameters
+        ]
+        if (res.NextToken) {
+          return this.resolveSSMParameters(configPath, nextParams, res.NextToken)
+        } else {
+          return Promise.resolve(nextParams)
+        }
+      })
+
   }
 }
 
