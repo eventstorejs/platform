@@ -60,7 +60,6 @@ class EventStore {
     const configPath = `/${this.stage}`
     return this.resolveSSMParameters(configPath)
       .then((ssmParams) => {
-        console.log(ssmParams)
         this.config = {
           parameters: {
             eventstore: {
@@ -76,7 +75,6 @@ class EventStore {
             }
           }
         }
-        console.log(JSON.stringify(this.config))
         if (!this.serverless.service.custom) {
           this.serverless.service.custom = {}
         }
