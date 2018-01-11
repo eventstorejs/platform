@@ -87,7 +87,7 @@ class Graphcool {
     }, this.serverless.service.custom.graphcool)
     return this.getTarget()
       .then((t) => this.target = t)
-      .then(() => this.serverless.service.provider.environment[this.graphcool.env] = this.target)
+      .then(() => this.serverless.service.provider.environment[this.graphcool.env] = `https://api.graph.cool/simple/v1/${this.target.split('/')[1]}`)
 
   }
 
