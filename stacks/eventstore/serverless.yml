@@ -107,7 +107,6 @@ provider:
 plugins:
   - serverless-dynamodb-autoscaling
   - serverless-deploy-ssm
-  - serverless-log-aggregate
   - serverless-stack-manager
 
 functions:
