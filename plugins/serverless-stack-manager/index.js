@@ -179,13 +179,13 @@ class StackManager {
     let res = []
     return Promise.all(
         this.stacks.map(s =>
-          this.resolveVersion(s).then((v) => res.push({
+          this.resolveVersion(s).then((v) => ({
             key: s,
             ...v
           }))
         )
       )
-      .then(() => res)
+      // .then(() => res)
 
   }
 
