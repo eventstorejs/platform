@@ -68,6 +68,12 @@ class Graphcool {
         Name: this.graphcool.ssm
       }, this.stage, this.region)
       .then((p) => p.Parameter.Value)
+      .then(t => {
+        if (t) {
+          this.serverless.service.provider.environment[this.graphcool.env] = `https://api.graph.cool/simple/v1/${t.split('/')[1]}`
+        }
+        return t
+      })
       .catch((e) => {
         this.serverless.cli.log(`Existing graphcool service not found`)
       })
@@ -86,8 +92,9 @@ class Graphcool {
       cluster: 'shared-eu-west-1'
     }, this.serverless.service.custom.graphcool)
     return this.getTarget()
-      .then((t) => this.target = t)
-      .then(() => this.serverless.service.provider.environment[this.graphcool.env] = `https://api.graph.cool/simple/v1/${this.target.split('/')[1]}`)
+      .then((t) => {
+        this.target = t
+      })
 
   }
 
@@ -106,7 +113,7 @@ class Graphcool {
     // .then(() => exec(`npm install`, {
     //   cwd: this.graphcool.path
     // }))
-    if(this.target) {
+    if (this.target) {
       fs.writeFileSync(path.join(this.graphcool.path, '.graphcoolrc'), `\
 targets:
   ${this.stage}: ${this.target}
