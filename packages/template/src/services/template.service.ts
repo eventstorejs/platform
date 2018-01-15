@@ -24,9 +24,9 @@ export class TemplateService {
   // async resolveProcess(templ)
 
   async process (request: TemplateRequest, context: any = {}, translation?: Translation): Promise<ProcessedTemplate> {
-    let start = Date.now()
-    let compiled = await this._resolver.resolve(request)
-    let lang = 'de'
+    const start = Date.now()
+    const compiled = await this._resolver.resolve(request)
+    const lang = 'de'
     log.debug(`Resolved template. processing`)
     try {
       log.info(`Using translation ${lang} for tenant ${request.tenantKey}`)
@@ -35,12 +35,12 @@ export class TemplateService {
       log.info(`Could not load tenant specific translatiosn. Falling back`)
       await this._translate.load(lang)
     }
-    let templateContext = {
+    const templateContext = {
       ...context,
       i18n: translation,
       __externalResources: []
     }
-    let template = await compiled(templateContext)
+    const template = await compiled(templateContext)
     const fileType = extname(request.key)
     log.debug(`Checking for postprocessing. is filetype: ${fileType}`)
     switch (fileType) {

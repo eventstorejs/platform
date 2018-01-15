@@ -1,5 +1,6 @@
 import { injectable, inject } from 'inversify'
-import { createReadStream, writeFile, readFile } from 'fs-extra'
+import { createReadStream, writeFile, readFile, mkdirs } from 'fs-extra'
+import { dirname } from 'path'
 import { badRequest } from 'boom'
 import { S3 } from 'aws-sdk'
 import { logger } from '@eventstorejs/request'
@@ -26,7 +27,7 @@ export class StorageService {
     } else {
       throw badRequest(`Either set localFile or body for upload`)
     }
-    let res = await this.s3.putObject({
+    const res = await this.s3.putObject({
       Bucket: request.bucket,
       Key: request.key,
       Body: body
@@ -39,7 +40,7 @@ export class StorageService {
 
   async read (request: FileReadRequest): Promise<S3.Body | undefined> {
     log.info(`Reading file from bucket ${request.bucket} and key ${request.key}`)
-    let res = (await this.s3.getObject({
+    const res = (await this.s3.getObject({
       Bucket: request.bucket,
       Key: request.key
     }).promise())
@@ -49,16 +50,16 @@ export class StorageService {
 
   async readDirectory (request: FileReadRequest): Promise<Array<{ key: string, lastModified: Date, value: S3.Body | undefined }>> {
     let nextToken
-    let result = []
+    const result = []
     log.debug(`Reading s3 directory on ${request.bucket} with prefix ${request.key}`)
     do {
-      let res: S3.Types.ListObjectsOutput = await (this.s3.listObjects({
+      const res: S3.Types.ListObjectsOutput = await (this.s3.listObjects({
         Bucket: request.bucket, /* required */
         Prefix: request.key,
         Marker: nextToken
       }).promise())
       log.debug(`Received ${(res.Contents || []).length} file keys`)
-      for (let r of (res.Contents || [])) {
+      for (const r of (res.Contents || [])) {
         result.push({
           key: r.Key as string,
           lastModified: r.LastModified as Date,
@@ -77,24 +78,30 @@ export class StorageService {
 
   async download (request: FileDownloadRequest) {
     log.info(`Tryging to download file from bucket ${request.bucket} and key ${request.key}`)
-
-    let res = await this.s3.getObject({
+    const start = Date.now()
+    const res = await this.s3.getObject({
       Bucket: request.bucket,
       Key: request.key
     }).promise()
+
+    log.debug(`Loaded file sucessfully in ${Date.now() - start}. Creating directory`)
+
+    await mkdirs(dirname(request.localFile))
+
+    await writeFile(request.localFile, res.Body, { encoding: 'utf-8' })
+
+    log.debug(`Wrote local file as ${request.localFile}`)
 
     if (request.encoding) {
       log.info(`Has encoding ${request.encoding}. Running post processing`)
       switch (request.encoding) {
         case 'base64':
-          let localFileContent = await readFile(request.localFile, 'utf-8')
+          const localFileContent = await readFile(request.localFile, 'utf-8')
           await writeFile(request.localFile, Buffer.from(localFileContent, 'base64'))
           break
         default:
           log.warn(`No post processing handler found for ${request.encoding}`)
       }
-    } else {
-      await writeFile(request.localFile, res.Body, { encoding: 'utf-8' })
     }
   }
 
