@@ -13,7 +13,7 @@ export function MailgunProviderFactory (context: interfaces.Context) {
   const config = context.container.get<Config>(Config)
   return async () => {
     log.debug(`Resolving mailgun client`)
-    mailgun({
+    return mailgun({
       apiKey: await config.resolve('mailer/mailgun/api'),
       domain: await config.resolve('mailer/mailgun/domain')
     })

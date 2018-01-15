@@ -45,11 +45,13 @@ export default class MailCommandHandler implements CommandRequestHandler {
         payload: {}
       } as Mail.SendedEvent)
     } catch (e) {
+      log.warn(`Mail Send failed.`, e)
       mail.apply({
         name: Mail.SendFailureEvent.name,
         payload: {
           reason: {
-            key: 'INTERNAL'
+            key: 'INTERNAL',
+            message: e ? e.toString() : undefined
           }
         }
       } as Mail.SendFailureEvent)
