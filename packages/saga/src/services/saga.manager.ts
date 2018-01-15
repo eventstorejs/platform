@@ -32,7 +32,7 @@ export class SagaManager {
     }
     const sagaConfig = Reflect.getMetadata(REFLECT_KEYS.SAGA, saga) as SagaDecorator
     for (const event of events) {
-      const handlers = saga._hasEventHandler(event)
+      const handlers = saga._hasSagaEventHandler(event)
       if (handlers.length > 0) {
         log.info(`has ${handlers.length} Event Handler for ${event.name}`)
         for (const handler of handlers) {
@@ -69,7 +69,6 @@ export class SagaManager {
               }
 
             }
-            console.log(association)
             sagaStates = await this.store.findByAssociation(association)
             log.info(`Resolved to ${sagaStates.length} sagas`)
           }
@@ -77,7 +76,7 @@ export class SagaManager {
 
             await saga._onInit(sagaState)
 
-            await saga._handle(handler.handler, event, context)
+            await saga._handleSagaEvent(handler.handler, event, context)
 
             const finishEvent = !!Reflect.getMetadata(REFLECT_KEYS.SAGA_FINISH, saga, handler.handler)
 

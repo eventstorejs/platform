@@ -55,7 +55,7 @@ export abstract class AbstractSaga {
 
   abstract onDestroy (): Promise<void>
 
-  _hasEventHandler (event: Event): Array<{ handler: string, meta: SagaEventHandlerDecorator }> {
+  _hasSagaEventHandler (event: Event): Array<{ handler: string, meta: SagaEventHandlerDecorator }> {
     const res = []
     for (const key in this) {
       const meta = Reflect.getMetadata(REFLECT_KEYS.SAGA_EVENT_HANDLER, this, key) as SagaEventHandlerDecorator
@@ -74,7 +74,7 @@ export abstract class AbstractSaga {
     return res
   }
 
-  _handle (handler: string, event: Event, context: Context) {
+  _handleSagaEvent (handler: string, event: Event, context: Context) {
     return (this as any)[handler](event, context)
   }
 
