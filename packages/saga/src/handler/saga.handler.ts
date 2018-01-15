@@ -29,7 +29,7 @@ export abstract class AbstractSagaRequestHandler implements AbstractEventHandler
     if (config && config.sagaType) {
       saga = this._injector.get(config.sagaType)
     }
-    await manager.handle(event, context, this as any)
+    await manager.handle(event, context, saga)
   }
 
 }

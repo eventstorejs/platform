@@ -29,7 +29,7 @@ custom:
       Ref: EventsTable
     eventstore/tables/saga:
       Ref: SagaTable
-    eventstore/tables/saga-associtation:
+    eventstore/tables/saga-association:
       Ref: SagaAssociationTable
     eventstore/tables/snapshot:
       Ref: SnapshotTable
