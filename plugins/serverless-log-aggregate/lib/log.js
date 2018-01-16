@@ -1,7 +1,11 @@
-var spawn = require('child_process').spawn
-var StreamSplitter = require("stream-splitter");
+const spawn = require('child_process').spawn
+const StreamSplitter = require("stream-splitter");
 const chalk = require('chalk');
-const moment = require('moment')
+const moment = require('moment');
+const path = require('path');
+
+const slsCwd = path.join(require.resolve('serverless'), '..', '..', '..', '.bin', 'sls');
+const logStackPath = path.dirname(require.resolve('@eventstorejs/logger-stack'));
 
 function setParameter(name, defaultValue) {
   let val = defaultValue
@@ -13,6 +17,14 @@ function setParameter(name, defaultValue) {
   return `${name}${val ? '=':''}${val ? val : ''}`
 }
 
+let stage
+for (let i = 0; i < process.argv.length; i++) {
+  if (process.argv[i] === '--stage') {
+    stage = process.argv[i + 1]
+    break
+  }
+}
+
 let filter = [
   setParameter('timestamp', '2*'),
   setParameter('requestId'),
@@ -22,7 +34,19 @@ let filter = [
   setParameter('message')
 ]
 
-let params = ['logs', '-f', 'ship-logs', `--filter`, `[${filter.join(',')}]`]
+let params = ['logs', '-f', 'ship-logs']
+
+if(stage) {
+  params = [
+    ...params,
+    '--stage',
+    stage
+  ]
+}
+
+params = [
+  ...params, [`--filter`, `[${filter.join(',')}]`]
+]
 let noTail = process.argv.find(v => v.trim().indexOf('--noTail') === 0)
 if (!noTail) {
   params.push('--tail')
@@ -35,8 +59,8 @@ if (startTime) {
   params.push('--startTime=60m')
 }
 
-const log = spawn('sls', params, {
-  cwd: `${process.cwd()}/stacks/logger`
+const log = spawn(slsCwd, params, {
+  cwd: logStackPath
 });
 
 
