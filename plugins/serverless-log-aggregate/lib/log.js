@@ -69,6 +69,14 @@ let lastWasError = false
 log.stdout.pipe(StreamSplitter("\n")).on('token', function (data) {
   let line = data.toString()
   let parts = line.split('\t')
+  if(line.indexOf('START RequestId:') === 0 || line.indexOf('END RequestId:') === 0 || line.indexOf('REPORT RequestId:') === 0 ) {
+    // ignore the start etc lines of the ship logs function
+    return
+  }
+  if(line.trim() === '') {
+    // dont print empty lines
+    return
+  }
   if (parts.length >= 3) {
     parts.splice(1, 1)
     parts[0] = chalk.cyan(parts[0])
