@@ -22,7 +22,7 @@ export default class TriggerCommandHandler implements CommandRequestHandler {
     type: Trigger.SetCommand
   })
   async setTrigger (command: Trigger.SetCommand) {
-    let trigger = new TriggerAggregate()
+    const trigger = new TriggerAggregate()
     trigger.apply({
       name: Trigger.SetEvent.name,
       aggregateId: command.aggregateId,
@@ -42,7 +42,7 @@ export default class TriggerCommandHandler implements CommandRequestHandler {
     type: Trigger.UpdateCommand
   })
   async updateTrigger (command: Trigger.UpdateCommand) {
-    let trigger = await this.triggerRepo.findOne(command.aggregateId as string)
+    const trigger = await this.triggerRepo.findOne(command.aggregateId as string)
     trigger.apply({
       name: Trigger.UpdatedEvent.name,
       payload: command.payload
@@ -61,7 +61,7 @@ export default class TriggerCommandHandler implements CommandRequestHandler {
     type: Trigger.CancelCommand
   })
   async cancelTrigger (command: Trigger.CancelCommand) {
-    let trigger = await this.triggerRepo.findOne(command.aggregateId as string)
+    const trigger = await this.triggerRepo.findOne(command.aggregateId as string)
     trigger.apply({
       name: Trigger.CanceledEvent.name,
       payload: command.payload

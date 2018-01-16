@@ -5,6 +5,7 @@ export interface TriggerAggregateAttributes {
   trigger?: Trigger.CronTrigger | Trigger.TimedTrigger
   lastTrigger?: Date
   expiredAt?: Date
+  canceled?: boolean
 }
 
 @aggregate({
@@ -22,11 +23,12 @@ export class TriggerAggregate implements Aggregate {
   @on({ type: Trigger.SetEvent, isCreate: true })
   public onTriggerSet (event: Trigger.SetEvent) {
     this.attributes = {
-      trigger: event.payload
+      trigger: event.payload,
+      canceled: false
     }
   }
 
-  @on({type: Trigger.TriggeredEvent})
+  @on({ type: Trigger.TriggeredEvent })
   public onTriggered (event: Trigger.TriggeredEvent) {
     this.attributes = {
       ... this.attributes,
@@ -34,11 +36,19 @@ export class TriggerAggregate implements Aggregate {
     }
   }
 
-  @on({type: Trigger.TriggerExpired})
-  public onTriggerExpired(event: Trigger.TriggerExpired) {
+  @on({ type: Trigger.TriggerExpired })
+  public onTriggerExpired (event: Trigger.TriggerExpired) {
     this.attributes = {
       ... this.attributes,
       expiredAt: event.committedAt
+    }
+  }
+
+  @on({ type: Trigger.CanceledEvent })
+  public onTriggerCanceled (_event: Trigger.CanceledEvent) {
+    this.attributes = {
+      ... this.attributes,
+      canceled: true
     }
   }
 

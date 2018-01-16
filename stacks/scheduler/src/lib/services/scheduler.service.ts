@@ -19,14 +19,14 @@ export interface NextTriggerOptions {
 }
 
 export interface SetTriggerOptions {
-  trigger: TimedTrigger | CronTrigger,
+  trigger: TimedTrigger | CronTrigger | undefined,
   triggerId: string
 }
 
 @injectable()
 export class SchedulerService {
 
-  constructor (@inject(Config) private config: Config, @inject(DYNAMO_TOKEN) private dynamo: DynamoDB.DocumentClient) {
+  constructor ( @inject(Config) private config: Config, @inject(DYNAMO_TOKEN) private dynamo: DynamoDB.DocumentClient) {
 
   }
 
@@ -62,7 +62,7 @@ export class SchedulerService {
   }
 
   public async getTriggersToEmit (): Promise<Array<NextTriggerOptions>> {
-    let items = await this.dynamo.scan({
+    const items = await this.dynamo.scan({
       TableName: await this.config.resolve<string>('TRIGGER_TABLE') as string,
       ExpressionAttributeNames: {
         '#nextTrigger': 'nextTrigger'
@@ -82,13 +82,13 @@ export class SchedulerService {
   }
 
   public async updateNextTriggers (triggers: Array<SetTriggerOptions>) {
-    let triggersToDelete = []
-    let triggersToUpdate = []
-    for (let trigger of triggers) {
-      if (t.is(trigger.trigger, TimedTrigger)) {
+    const triggersToDelete = []
+    const triggersToUpdate = []
+    for (const trigger of triggers) {
+      if (!trigger.trigger || t.is(trigger.trigger, TimedTrigger)) {
         triggersToDelete.push(trigger.triggerId)
       } else {
-        let nextTrigger = this.getNextTrigger(trigger.trigger)
+        const nextTrigger = this.getNextTrigger(trigger.trigger)
         if (!nextTrigger) {
           triggersToDelete.push(trigger.triggerId)
         } else {
@@ -99,14 +99,14 @@ export class SchedulerService {
         }
       }
     }
-    let triggerUpdates = [
+    const triggerUpdates = [
       ...triggersToUpdate.map(a => ({ PutRequest: { Item: a } })),
       ...triggersToDelete.map(a => ({ DeleteRequest: { Key: { triggerId: a } } }))
     ]
-    let chunks = chunk(triggerUpdates, 25)
+    const chunks = chunk(triggerUpdates, 25)
     log.debug(`Chuncked assicationkeys into ${chunks.length} parts`)
 
-    for (let chunk of chunks) {
+    for (const chunk of chunks) {
       const params = {
         RequestItems: {
           [await this.config.resolve<string>('TRIGGER_TABLE') as string]: chunk
@@ -124,12 +124,12 @@ export class SchedulerService {
     if (trigger.lastExecution && moment(trigger.lastExecution).isSameOrBefore(moment())) {
       return undefined
     }
-    let interval = parser.parseExpression(trigger.cron, {
+    const interval = parser.parseExpression(trigger.cron, {
       currentDate: new Date(),
       endDate: trigger.lastExecution,
       iterator: true
     }) as Iterator<any>
-    let nextTrigger = interval.next()
+    const nextTrigger = interval.next()
     return nextTrigger.value.toDate()
   }
 }
