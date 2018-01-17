@@ -1,0 +1,20 @@
+{
+  "name": "@eventstorejs/graphql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist node_modules && tsc -p tsconfig.build.json"
+  },
+  "author": "Jonas Holtorf <Jonas.Holtorf@gmail.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@eventstorejs/core": "^1.0.0",
+    "@eventstorejs/request": "^1.0.0",
+    "graphql-request": "^1.4.1"
+  }
+}
