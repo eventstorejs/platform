@@ -13,7 +13,6 @@
     "mjml": "^3.3.5"
   },
   "dependencies": {
-    "circle-github-bot": "^0.4.0",
     "git-latest-semver-tag": "^1.0.2",
     "is-ci": "^1.0.10",
     "lodash": "^4.17.4",
