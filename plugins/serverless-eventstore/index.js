@@ -96,7 +96,7 @@ class EventStore {
                 stream: {
                   type: 'dynamodb',
                   batchSize: 1,
-                  arn: eventStreamArn.trim()
+                  arn: eventStreamArn
                 }
               }]
             },
@@ -105,7 +105,7 @@ class EventStore {
                 stream: {
                   type: 'dynamodb',
                   batchSize: 1,
-                  arn: eventStreamArn.trim()
+                  arn: eventStreamArn
                 }
               }]
             },
@@ -114,7 +114,7 @@ class EventStore {
                 stream: {
                   type: 'dynamodb',
                   batchSize: 1,
-                  arn: eventStreamArn.trim()
+                  arn: eventStreamArn
                 }
               }]
             }
@@ -258,7 +258,7 @@ class EventStore {
     return this.aws.request('DynamoDBStreams', 'listStreams', {
       TableName: table
     })
-      .then(r => r.Streams[0].StreamArn)
+      .then(r => r.Streams[0].StreamArn.trim())
   }
 }
 
