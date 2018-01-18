@@ -12,9 +12,7 @@ export const SetEvent = event({ name: 'SET', aggregateType: 'trigger', context: 
 
 export type SetEvent = t.TypeOf<typeof SetEvent>
 
-export const UpdatedEvent = event({ name: 'UPDATED', aggregateType: 'trigger', context: 'scheduler' }, t.interface({
-
-}))
+export const UpdatedEvent = event({ name: 'UPDATED', aggregateType: 'trigger', context: 'scheduler' }, t.union([CronTrigger, TimedTrigger]))
 
 export type UpdatedEvent = t.TypeOf<typeof UpdatedEvent>
 

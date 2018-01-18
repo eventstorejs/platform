@@ -44,6 +44,14 @@ export class TriggerAggregate implements Aggregate {
     }
   }
 
+  @on({ type: Trigger.UpdatedEvent })
+  public onTriggerUpdated (event: Trigger.UpdatedEvent) {
+    this.attributes = {
+      ... this.attributes,
+      trigger: event.payload
+    }
+  }
+
   @on({ type: Trigger.CanceledEvent })
   public onTriggerCanceled (_event: Trigger.CanceledEvent) {
     this.attributes = {
