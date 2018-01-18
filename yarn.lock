@@ -1153,7 +1153,7 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-bluebird@^3.0.5, bluebird@^3.0.6, bluebird@^3.5.0, bluebird@^3.5.1:
+bluebird@^3.0.5, bluebird@^3.0.6, bluebird@^3.4.1, bluebird@^3.4.7, bluebird@^3.5.0, bluebird@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
 
@@ -1987,6 +1987,21 @@ copy-descriptor@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
 
+copy-webpack-plugin@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/copy-webpack-plugin/-/copy-webpack-plugin-4.3.1.tgz#19ba6370bf6f8e263cbd66185a2b79f2321a9302"
+  dependencies:
+    cacache "^10.0.1"
+    find-cache-dir "^1.0.0"
+    globby "^7.1.1"
+    is-glob "^4.0.0"
+    loader-utils "^0.2.15"
+    lodash "^4.3.0"
+    minimatch "^3.0.4"
+    p-limit "^1.0.0"
+    pify "^3.0.0"
+    serialize-javascript "^1.4.0"
+
 core-js@^1.0.0, core-js@^1.1.1:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
@@ -2652,6 +2667,10 @@ entities@^1.1.1, entities@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.1.tgz#6e5c2d0a5621b5dadaecef80b90edfb5cd7772f0"
 
+err-code@^1.0.0:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/err-code/-/err-code-1.1.2.tgz#06e0116d3028f6aef4806849eb0ea6a748ae6960"
+
 errno@^0.1.3, errno@^0.1.4:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/errno/-/errno-0.1.6.tgz#c386ce8a6283f14fc09563b71560908c9bf53026"
@@ -3012,6 +3031,14 @@ figures@^2.0.0:
   dependencies:
     escape-string-regexp "^1.0.5"
 
+file-js@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/file-js/-/file-js-0.3.0.tgz#fab46bf782346c9294499f1f0d2ad07d838f25d1"
+  dependencies:
+    bluebird "^3.4.7"
+    minimatch "^3.0.3"
+    proper-lockfile "^1.2.0"
+
 file-type@5.2.0, file-type@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/file-type/-/file-type-5.2.0.tgz#2ddbea7c73ffe36368dfae49dc338c058c2b8ad6"
@@ -3027,6 +3054,17 @@ file-type@^6.1.0:
 file-uri-to-path@1:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz#553a7b8446ff6f684359c445f1e37a05dacc33dd"
+
+filehound@^1.16.1:
+  version "1.16.2"
+  resolved "https://registry.yarnpkg.com/filehound/-/filehound-1.16.2.tgz#e72aefa5587723e2e299075d147e8b6b578c73d0"
+  dependencies:
+    bluebird "^3.4.1"
+    file-js "0.3.0"
+    lodash "^4.13.1"
+    minimatch "^3.0.2"
+    moment "^2.14.1"
+    unit-compare "^1.0.1"
 
 filename-regex@^2.0.0:
   version "2.0.1"
@@ -4291,7 +4329,7 @@ is-extglob@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-extglob/-/is-extglob-1.0.0.tgz#ac468177c4943405a092fc8f29760c6ffc6206c0"
 
-is-extglob@^2.1.0:
+is-extglob@^2.1.0, is-extglob@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/is-extglob/-/is-extglob-2.1.1.tgz#a88c02535791f02ed37c76a1b9ea9773c833f8c2"
 
@@ -4322,6 +4360,12 @@ is-glob@^3.1.0:
   resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-3.1.0.tgz#7ba5ae24217804ac70707b96922567486cc3e84a"
   dependencies:
     is-extglob "^2.1.0"
+
+is-glob@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-4.0.0.tgz#9521c76845cc2610a85203ddf080a958c2ffabc0"
+  dependencies:
+    is-extglob "^2.1.1"
 
 is-installed-globally@^0.1.0:
   version "0.1.0"
@@ -5187,6 +5231,15 @@ loader-runner@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-2.3.0.tgz#f482aea82d543e07921700d5a46ef26fdac6b8a2"
 
+loader-utils@^0.2.15:
+  version "0.2.17"
+  resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-0.2.17.tgz#f86e6374d43205a6e6c60e9196f17c0299bfb348"
+  dependencies:
+    big.js "^3.1.3"
+    emojis-list "^2.0.0"
+    json5 "^0.5.0"
+    object-assign "^4.0.1"
+
 loader-utils@^1.0.2, loader-utils@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-1.1.0.tgz#c98aef488bcceda2ffb5e2de646d6a754429f5cd"
@@ -5985,7 +6038,7 @@ moment-timezone@^0.5.0, moment-timezone@^0.5.14:
   dependencies:
     moment ">= 2.9.0"
 
-"moment@>= 2.9.0", moment@>=2.14.0, moment@^2.13.0, moment@^2.6.0:
+"moment@>= 2.9.0", moment@>=2.14.0, moment@^2.13.0, moment@^2.14.1, moment@^2.6.0:
   version "2.20.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.20.1.tgz#d6eb1a46cbcc14a2b2f9434112c1ff8907f313fd"
 
@@ -6416,7 +6469,7 @@ p-is-promise@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/p-is-promise/-/p-is-promise-1.1.0.tgz#9c9456989e9f6588017b0434d56097675c3da05e"
 
-p-limit@^1.1.0:
+p-limit@^1.0.0, p-limit@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-1.2.0.tgz#0e92b6bedcb59f022c13d0f1949dc82d15909f1c"
   dependencies:
@@ -6788,6 +6841,15 @@ prop-types@^15.5.10:
     fbjs "^0.8.16"
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
+
+proper-lockfile@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/proper-lockfile/-/proper-lockfile-1.2.0.tgz#ceff5dd89d3e5f10fb75e1e8e76bc75801a59c34"
+  dependencies:
+    err-code "^1.0.0"
+    extend "^3.0.0"
+    graceful-fs "^4.1.2"
+    retry "^0.10.0"
 
 proto-list@~1.2.1:
   version "1.2.4"
@@ -8524,6 +8586,12 @@ unique-string@^1.0.0:
   dependencies:
     crypto-random-string "^1.0.0"
 
+unit-compare@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/unit-compare/-/unit-compare-1.0.1.tgz#0c7459f0e5bf53637ea873ca3cee18de2eeca386"
+  dependencies:
+    moment "^2.14.1"
+
 universalify@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-0.1.1.tgz#fa71badd4437af4c148841e3b3b165f9e9e590b7"
@@ -8777,6 +8845,12 @@ webidl-conversions@^4.0.1, webidl-conversions@^4.0.2:
 webpack-node-externals@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/webpack-node-externals/-/webpack-node-externals-1.6.0.tgz#232c62ec6092b100635a3d29d83c1747128df9bd"
+
+webpack-permissions-plugin@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/webpack-permissions-plugin/-/webpack-permissions-plugin-0.0.2.tgz#9c18df4d08603cf5d53dbf5344ebb6ccb878d844"
+  dependencies:
+    filehound "^1.16.1"
 
 webpack-sources@^1.0.1, webpack-sources@^1.1.0:
   version "1.1.0"

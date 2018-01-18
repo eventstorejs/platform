@@ -14,6 +14,8 @@ export interface RequestHandlerDecorator {
   timeout?: number
   events?: any
   memory?: number
+  include?: Array<string>
+  exclude?: Array<string>
 }
 
 export const REQUEST_HANDLER_CONFIG_DEFAULTS: RequestHandlerDecorator = {

@@ -1,0 +1,44 @@
+service: pdf
+
+custom:
+
+  ssm:
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: int
+  region: eu-central-1
+  memorySize: 256
+  timeout: 60 # optional, in seconds, default is 6
+  environment:
+    STAGE : ${opt:stage, self:provider.stage}
+    REGION: ${opt:region, self:provider.region}
+    OUTPUT_BUCKET_NAME: ${self:provider.environment.STAGE}.${self:service}.4wheels-it-solutions.de
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - arn:aws:s3:::${self:provider.environment.OUTPUT_BUCKET_NAME}
+        - arn:aws:s3:::${self:provider.environment.OUTPUT_BUCKET_NAME}/*
+
+plugins:
+  - "@eventstorejs/serverless-eventstore"
+  - serverless-annotations
+  - serverless-deploy-ssm
+  - serverless-log-aggregate
+  - serverless-webpack
+  - serverless-stack-manager
+
+functions:
+
+
+resources:
+  Resources:
+    OutputBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.OUTPUT_BUCKET_NAME}
+      DeletionPolicy: Retain

@@ -253,7 +253,9 @@ class ServerlessAnnotations {
           name: functionName,
           events: mergedEvents,
           timeout: handler.options.timeout,
-          memory: handler.options.memory
+          memory: handler.options.memory,
+          include: handler.options.include,
+          exclude: handler.options.exclude
         }, handlerConfig[handler.name])
         handlerCount++
         process.env.SLS_DEBUG && this.serverless.cli.log(`Added funtion: ${handler.options.name} as ${functionName}`);
