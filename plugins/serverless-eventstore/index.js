@@ -169,8 +169,7 @@ class EventStore {
               `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.eventstore}`,
               `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.snapshot}`,
               `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.saga}`,
-              `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables['saga-association']}`,
-              this.config.parameters.eventstore['event-stream'].arn.trim()
+              `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables['saga-association']}`
             ]
           }, {
             Effect: 'Allow',
