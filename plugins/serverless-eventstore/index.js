@@ -78,6 +78,9 @@ class EventStore {
         if (!this.serverless.service.custom) {
           this.serverless.service.custom = {}
         }
+        return this.resolveEventStreamArn(this.config.parameters.eventstore.tables.events)
+      })
+      .then((eventStreamArn) => {
         this.serverless.service.custom.annotations = _.extend({}, {
           handlers: {
             handler: {},
@@ -93,7 +96,7 @@ class EventStore {
                 stream: {
                   type: 'dynamodb',
                   batchSize: 1,
-                  arn: this.config.parameters.eventstore['event-stream'].arn.trim()
+                  arn: eventStreamArn.trim()
                 }
               }]
             },
@@ -102,7 +105,7 @@ class EventStore {
                 stream: {
                   type: 'dynamodb',
                   batchSize: 1,
-                  arn: this.config.parameters.eventstore['event-stream'].arn.trim()
+                  arn: eventStreamArn.trim()
                 }
               }]
             },
@@ -111,7 +114,7 @@ class EventStore {
                 stream: {
                   type: 'dynamodb',
                   batchSize: 1,
-                  arn: this.config.parameters.eventstore['event-stream'].arn.trim()
+                  arn: eventStreamArn.trim()
                 }
               }]
             }
@@ -249,7 +252,13 @@ class EventStore {
           return Promise.resolve(nextParams)
         }
       })
+  }
 
+  resolveEventStreamArn(table) {
+    return this.aws.request('DynamoDBStreams', 'listStreams', {
+      TableName: table
+    })
+      .then(r => r.Streams[0].StreamArn)
   }
 }
 
