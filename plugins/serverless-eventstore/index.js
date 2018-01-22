@@ -78,7 +78,7 @@ class EventStore {
         if (!this.serverless.service.custom) {
           this.serverless.service.custom = {}
         }
-        return this.resolveEventStreamArn(this.config.parameters.eventstore.tables ? this.config.parameters.eventstore.tables.events : undefined)
+        return this.resolveEventStreamArn(this.config.parameters.eventstore.tables ? this.config.parameters.eventstore.tables.eventstore : undefined)
       })
       .then((eventStreamArn) => {
         this.serverless.service.custom.annotations = _.extend({}, {
@@ -256,7 +256,7 @@ class EventStore {
 
   resolveEventStreamArn(table) {
     if (!table) {
-      return undefined;
+      return undefined
     }
     return this.aws.request('DynamoDBStreams', 'listStreams', {
         TableName: table
