@@ -16,20 +16,20 @@ export class PdfAggregate implements Aggregate {
 
   apply: (event: Pdf.Events) => void
 
-  @on({ type: Pdf.PendingEvent, isCreate: true })
-  public onPdfPending (event: Pdf.PendingEvent) {
+  @on({ type: Pdf.Event.Pending, isCreate: true })
+  public onPdfPending (event: Pdf.Event.Pending) {
     this.attributes = {
     }
   }
 
-  @on({ type: Pdf.CreatedEvent })
-  public onPdfCreated (event: Pdf.CreatedEvent) {
+  @on({ type: Pdf.Event.Created })
+  public onPdfCreated (event: Pdf.Event.Created) {
     this.attributes = {
     }
   }
 
-  @on({ type: Pdf.CreateFailedEvent})
-  public onPdfCreateFailed (_event: Pdf.CreateFailedEvent) {
+  @on({ type: Pdf.Event.CreateFailed})
+  public onPdfCreateFailed (_event: Pdf.Event.CreateFailed) {
   }
 
 }

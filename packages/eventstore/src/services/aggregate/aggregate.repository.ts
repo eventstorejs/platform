@@ -33,12 +33,12 @@ export class AbstractAggregateRepository<A extends Aggregate> {
         context = snapshot.context
       }
     }
-    let events = await this.eventStore.query(aggregateId, revision)
+    const events = await this.eventStore.query(aggregateId, revision)
     if (events && events.length > 0) {
       aggregateType = events[0].aggregateType
       context = events[0].context
     }
-    let agg: AbstractAggregate = new (this.getConfig().aggregate)()
+    const agg: AbstractAggregate = new (this.getConfig().aggregate)()
     if (this.getAggregateConfig(agg).name !== aggregateType || this.getAggregateConfig(agg).context !== context) {
       throw badRequest(`Invalid event applied to aggregate.\
       Received: ${context}.${aggregateType}.\
@@ -85,7 +85,7 @@ export class AbstractAggregateRepository<A extends Aggregate> {
   // }
 
   public async commit (a: A): Promise<void> {
-    let aggregate: AbstractAggregate = (a as any)
+    const aggregate: AbstractAggregate = (a as any)
     if (aggregate._uncomittedEvents.length === 0) {
       log.info('Events emtpy. nothingt to commit')
       return
@@ -115,8 +115,8 @@ export class AbstractAggregateRepository<A extends Aggregate> {
     if (aggregate._commitedEvents && aggregate._commitedEvents.length > 0) {
       nextRevision = ((aggregate._commitedEvents.slice(-1).pop() as Event).revision || 0)
     }
-    let requestContext = CONTEXT()
-    for (let e of aggregate._uncomittedEvents) {
+    const requestContext = CONTEXT()
+    for (const e of aggregate._uncomittedEvents) {
       nextRevision++
       e.revision = nextRevision
       e.aggregateType = this.getAggregateConfig(aggregate).name
@@ -164,7 +164,7 @@ export function aggregateRepository (value: AggregateRepositoryDecorator<any>) {
     if (!value.aggregate) {
       throw new Error('Aggregate type not provided')
     }
-    let config = {
+    const config = {
       ...value
     }
     // applyMixins(target, [AbstractAggregateRepository])

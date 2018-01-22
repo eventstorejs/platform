@@ -14,6 +14,28 @@ import { optional } from '@eventstorejs/api-builder'
 // export interface EventFactory<P> {
 //   (p: P): EventWithPayload<P>
 // }
+export interface EventNamespaceFactoryOptions {
+  aggregateType: string,
+  context: string
+}
+
+export function eventNamespaceFactory (options: EventNamespaceFactoryOptions) {
+  return <P>(name: string, payload: t.Type<P>) => {
+    if (!options || !options.aggregateType || !options.context) {
+      console.warn(`Invalid event:`, options)
+      throw new Error(`Invalid event defintion supplied`)
+    }
+    const type = t.intersection([Event, optional({
+      name: t.literal(name),
+      payload: payload
+    }, {
+      aggregateType: t.literal(options.aggregateType),
+      context: t.literal(options.context)
+    })], name);
+    (type as any)._association = options
+    return type
+  }
+}
 
 export interface EventAssociation {
   name: string,
@@ -22,16 +44,17 @@ export interface EventAssociation {
 }
 
 export function event<P> (options: EventAssociation, payload: t.Type<P>) {
+  console.warn(`Using deprecated event builder`)
   if (!options || !options.name || !options.aggregateType || !options.context) {
     console.warn(`Invalid event:`, options)
     throw new Error(`Invalid event defintion supplied`)
   }
-  let type = t.intersection([Event, optional({
+  const type = t.intersection([Event, optional({
     name: t.literal(options.name),
     payload : payload
   }, {
     aggregateType: t.literal(options.aggregateType),
-    context: t.literal(options.context),
+    context: t.literal(options.context)
   })], options.name);
   (type as any)._association = options
   return type

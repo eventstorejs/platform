@@ -32,17 +32,17 @@ export default class PdfCommandHandler implements CommandRequestHandler {
   }
 
   @commandEventHandler({
-    type: Pdf.CreateCommand
+    type: Pdf.Command.Create
   })
-  async handlePdfCreate (command: Pdf.CreateCommand, _context: Context) {
+  async handlePdfCreate (command: Pdf.Command.Create, _context: Context) {
     const agg = new PdfAggregate()
     try {
       agg.apply({
-        name: Pdf.PendingEvent.name,
+        name: Pdf.Event.Pending.name,
         payload: {
-          ... command.payload
+          ...command.payload
         }
-      } as Pdf.CreatedEvent)
+      } as Pdf.Event.Pending)
       const pdf = await this.pdf.process(command.payload.template, {
         clean: false,
         externalResources: command.payload.externalResources
@@ -59,12 +59,12 @@ export default class PdfCommandHandler implements CommandRequestHandler {
       log.info(`Upload completed for ${remotePath}. Clean and dipatch created event`)
       pdf.clean()
       agg.apply({
-        name: Pdf.CreatedEvent.name,
+        name: Pdf.Event.Created.name,
         payload: {
           path: remotePath,
           bucket
         }
-      } as Pdf.CreatedEvent)
+      } as Pdf.Event.Created)
       await this.pdfRepo.commit(agg)
       log.info(`Created Event Disptached. All done`)
       return done(200, {
@@ -73,11 +73,11 @@ export default class PdfCommandHandler implements CommandRequestHandler {
     } catch (e) {
       log.error(`PDF creation failed`, e)
       await agg.apply({
-        name: Pdf.CreateFailedEvent.name,
+        name: Pdf.Event.CreateFailed.name,
         payload: {
           reason: ErrorUtils.build({ key: 'INTERNAL', message: ErrorUtils.parseAsMessage(e) })
         }
-      } as Pdf.CreateFailedEvent)
+      } as Pdf.Event.CreateFailed)
       await this.pdfRepo.commit(agg)
       return done(500, {
         aggregateId: agg.aggregateId
