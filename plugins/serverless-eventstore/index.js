@@ -78,7 +78,7 @@ class EventStore {
         if (!this.serverless.service.custom) {
           this.serverless.service.custom = {}
         }
-        return this.resolveEventStreamArn(this.config.parameters.eventstore.tables.events)
+        return this.resolveEventStreamArn(this.config.parameters.eventstore.tables ? this.config.parameters.eventstore.tables.events : undefined)
       })
       .then((eventStreamArn) => {
         this.serverless.service.custom.annotations = _.extend({}, {
@@ -87,7 +87,7 @@ class EventStore {
             commandHandler: {
               events: [{
                 sns: {
-                  arn: this.config.parameters.eventstore['command-bus'].arn.trim()
+                  arn: this.config.parameters.eventstore['command-bus'] ? this.config.parameters.eventstore['command-bus'].arn.trim() : undefined
                 }
               }]
             },
@@ -149,7 +149,7 @@ class EventStore {
               'SNS:Publish'
             ],
             Resource: [
-              `${this.config.parameters.eventstore['command-bus'].arn}`
+              this.config.parameters.eventstore['command-bus'] ? `${this.config.parameters.eventstore['command-bus'].arn}` : undefined
             ]
           }, {
             Effect: 'Allow',
@@ -165,12 +165,13 @@ class EventStore {
             Action: [
               'dynamodb:*'
             ],
-            Resource: [
-              `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.eventstore}`,
-              `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.snapshot}`,
-              `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.saga}`,
-              `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables['saga-association']}`
-            ]
+            Resource: this.config.parameters.eventstore.tables ? [
+                `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.eventstore}`,
+                `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.snapshot}`,
+                `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables.saga}`,
+                `arn:aws:dynamodb:${this.region}:*:table/${this.config.parameters.eventstore.tables['saga-association']}`
+              ] :
+              []
           }, {
             Effect: 'Allow',
             Action: [
@@ -242,8 +243,8 @@ class EventStore {
     return this.aws.request('SSM', 'getParametersByPath', requestParams, this.stage, this.region)
       .then((res) => {
         let nextParams = [
-          ... params,
-          ... res.Parameters
+          ...params,
+          ...res.Parameters
         ]
         if (res.NextToken) {
           return this.resolveSSMParameters(configPath, nextParams, res.NextToken)
@@ -254,9 +255,12 @@ class EventStore {
   }
 
   resolveEventStreamArn(table) {
+    if (!table) {
+      return undefined;
+    }
     return this.aws.request('DynamoDBStreams', 'listStreams', {
-      TableName: table
-    })
+        TableName: table
+      })
       .then(r => r.Streams[0].StreamArn.trim())
   }
 }
