@@ -4,22 +4,26 @@ import { graphql, GraphQLSchema } from 'graphql'
 import { inject } from 'inversify'
 import { weaveSchemas } from 'graphql-weaver'
 import { tryStringifyJson } from '@eventstorejs/core'
-import { handler, RequestHandler, Context, HttpResponse } from '@eventstorejs/request'
+import { handler, RequestHandler, Context, HttpResponse, logger } from '@eventstorejs/request'
 import { IdentityModule } from '@eventstorejs/identity'
 import { EventStoreModule } from '@eventstorejs/eventstore'
 import { ApiStackModule, GraphQLEndpointResolver } from '../../lib'
 
 let schema: Promise<GraphQLSchema>
 
+const log = logger('graphql')
+
 const schemaFactory = (endpointResolver: GraphQLEndpointResolver) => {
   if (!schema) {
     schema = new Promise<GraphQLSchema>(async (resolve, reject) => {
       try {
         const endpoints = await endpointResolver.resolve()
-        resolve(weaveSchemas({
+        log.info(`Resolved to ${endpoints.length} graphql endpoints`)
+        weaveSchemas({
           endpoints
-        }))
+        }).then(s => resolve(s))
       } catch (e) {
+        log.error(`Could not resolve graphql endpoints`)
         reject(e)
       }
     })
@@ -32,6 +36,7 @@ const schemaFactory = (endpointResolver: GraphQLEndpointResolver) => {
 @handler({
   name: 'graphql-gateway',
   timeout: 30,
+  memory: 1024,
   events: [{
     http: {
       method: 'POST',
@@ -46,7 +51,7 @@ const schemaFactory = (endpointResolver: GraphQLEndpointResolver) => {
 })
 export default class GraphqlGatewayHandler implements RequestHandler<any> {
 
-  constructor( @inject(GraphQLEndpointResolver) private endpointResolver: GraphQLEndpointResolver) {
+  constructor ( @inject(GraphQLEndpointResolver) private endpointResolver: GraphQLEndpointResolver) {
 
   }
 
